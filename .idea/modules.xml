@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Openmrs_Android.iml" filepath="$PROJECT_DIR$/.idea/modules/Openmrs_Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Openmrs_Android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Openmrs_Android.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/openmrs-android-sdk/Openmrs_Android.openmrs-android-sdk.iml" filepath="$PROJECT_DIR$/.idea/modules/openmrs-android-sdk/Openmrs_Android.openmrs-android-sdk.iml" />
+    </modules>
+  </component>
+</project>

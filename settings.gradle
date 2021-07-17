@@ -1,0 +1,3 @@
+include ':openmrs-android-sdk'
+include ':app'
+rootProject.name = "Openmrs Android"
