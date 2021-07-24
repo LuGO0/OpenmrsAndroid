@@ -40,6 +40,7 @@ import com.example.openmrs_android_sdk.utilities.ToastUtil;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -72,7 +73,30 @@ public class ProviderRepository extends BaseRepository {
                     if (response.isSuccessful()) {
                         if (!response.body().getResults().isEmpty()) {
                             List<Provider> serversList = response.body().getResults();
-                            providerRoomDao.insertAllOrders(serversList);
+
+                            List<String> providerUuids = providerRoomDao.getCurrentUUIDs().blockingGet();
+                            HashSet<String> checkUuids = new HashSet<>();
+
+                            for (String element : providerUuids) {
+                                if (element != null)
+                                    checkUuids.add(element);
+                            }
+
+                            providerUuids.clear();
+                            providerUuids = null;
+
+                            for (Provider provider : serversList) {
+                                if (checkUuids.contains(provider.getUuid()) == false) {
+                                    providerRoomDao.addProvider(provider);
+                                }
+
+                                checkUuids.remove(provider.getUuid());
+                            }
+
+                            for (String uuid : checkUuids) {
+                                providerRoomDao.deleteByUuid(uuid);
+                            }
+
                             providerLiveData.setValue(providerRoomDao.getProviderList().blockingGet());
                         } else {
                             providerLiveData.setValue(providerRoomDao.getProviderList().blockingGet());
@@ -154,7 +178,7 @@ public class ProviderRepository extends BaseRepository {
 
                         //offline update operation
                         providerRoomDao.updateProviderByUuid(response.body().getDisplay(), provider.getId(), response.body().getPerson(), response.body().getUuid(),
-                            response.body().getIdentifier());
+                                response.body().getIdentifier());
 
                         ToastUtil.success(context.getString(R.string.edit_provider_success_msg));
                         logger.e("Editing Provider Successful " + response.raw());
@@ -232,7 +256,7 @@ public class ProviderRepository extends BaseRepository {
         if (NetworkUtils.hasNetwork()) {
             String locationEndPoint = url + ApplicationConstants.API.REST_ENDPOINT + "location";
             Call<Results<LocationEntity>> call =
-                restApi.getLocations(locationEndPoint, ApplicationConstants.API.TAG_ADMISSION_LOCATION, ApplicationConstants.API.FULL);
+                    restApi.getLocations(locationEndPoint, ApplicationConstants.API.TAG_ADMISSION_LOCATION, ApplicationConstants.API.FULL);
             call.enqueue(new Callback<Results<LocationEntity>>() {
                 @Override
                 public void onResponse(Call<Results<LocationEntity>> call, Response<Results<LocationEntity>> response) {
